@@ -1,0 +1,100 @@
+html,
+body,
+div,
+ul {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+}
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+button {
+  outline: none;
+}
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-select {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+.clearfix::after,
+.clearfix::before {
+  content: ' ';
+  display: table;
+}
+.clearfix::after {
+  clear: both;
+}
+.ns_box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.ns_stage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: yellow;
+}
+.ns_item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-color: pink;
+}
+.ns_item_show {
+  left: 0;
+  top: 0;
+}
+.ns_item_hidden {
+  left: 0;
+  top: 100%;
+}
+.ns_control {
+  position: relative;
+  width: 300px;
+  height: 100%;
+  margin: 0 auto;
+}
+.ns_control > button {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 20px;
+  height: 50px;
+  margin-top: -25px;
+  background-color: blue;
+  border: none;
+  padding: 0px;
+  cursor: pointer;
+}
+.ns_neg {
+  left: 0;
+}
+.ns_pos {
+  right: 0;
+}
+.niu {
+  width: 400px;
+  height: 200px;
+  background-color: pink;
+  margin-top: 200px;
+  margin-left: 200px;
+}

@@ -1,0 +1,36 @@
+// 标准化样式
+html,body,div,ul{
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    margin:0px;
+    padding:0px;
+}
+ul{
+    list-style:none;
+}
+a{
+    text-decoration:none;
+}
+button{
+    outline:none;
+}
+// 常用样式
+.text-overflow{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.user-select{
+    user-select:none;
+    -moz-user-select:none;
+    -webkit-user-select:none;
+    -o-user-select:none;
+}
+.clearfix::after,.clearfix::before{
+    content:' ';
+    display:table;
+}
+.clearfix::after{
+    clear:both;
+}
