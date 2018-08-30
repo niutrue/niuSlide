@@ -24,3 +24,22 @@ export function btn(className,id){
     }
     return node;
 }
+//给元素设置样式
+export function setStyle(ele,style){
+    for(var key in style){
+        ele.style[key] = style[key];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//

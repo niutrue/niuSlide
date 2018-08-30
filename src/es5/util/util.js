@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.createEvent = createEvent;
 exports.div = div;
 exports.btn = btn;
+exports.setStyle = setStyle;
 //创建自定义事件
 function createEvent(name) {
     return new CustomEvent(name);
@@ -32,3 +33,11 @@ function btn(className, id) {
     }
     return node;
 }
+//给元素设置样式
+function setStyle(ele, style) {
+    for (var key in style) {
+        ele.style[key] = style[key];
+    }
+}
+
+//
