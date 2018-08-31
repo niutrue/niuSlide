@@ -19,26 +19,31 @@ class NiuSlide{
             this.containerElement = container;//挂载元素
         }
         this.pageArr = obj.pageArr;//拥有图片的数组
+        this.pageNum = obj.pageArr.length;//页面的数目
         this.curIndex = 0;//当前显示的页码
         this.nextIndex = 1;//接下来要显示的页码
+        this.pageMode = 'pos';//换页模式，正向，负向
+        this.stageNode = null;//舞台上的node要退场
+        this.backNode = null;//后台的node要进场
         //创建并且获取轮播图节点
         this.createNodes();
         arrow(this);//这里应该是可配置的
     }
     //创建并且现实dom,完成初始化,初始化，一个台前，一个幕后
-    createNodes(){
+    createNodes(){//这是基本node。舞台上的元素，可以拆开，跟着特效走
         this.boxElement = div('ns_box');
         this.stageElement = div('ns_stage');
         this.item1Element = div('ns_item ns_item_cur','item1');
-        setStyle(this.item1Element,{//一个元素是表演状态
+        setStyle(this.item1Element,{//一个元素是舞台状态
             left:'0px',
             top:'0px',
             backgroundImage:`url(${this.pageArr[this.curIndex]})`
         })
         this.item2Element = div('ns_item ns_item_next','item2');
-        setStyle(this.item2Element,{//一个元素是后台状态
-            left:'0px',
-            top:'100%',
+        setStyle(this.item2Element,{//一个元素是台前状态
+            left:'200%',
+            top:'200%',
+            transition:'left 0 linear',
             backgroundImage:`url(${this.pageArr[this.nextIndex]})`
         })
         this.controlElement = div('ns_control');
@@ -69,6 +74,9 @@ window.addEventListener('lmFirstImageLoad',function(){
 },false);
 
 var ns1 = new NiuSlide('.niu',{
-    pageArr:arr1
+    pageArr:arr1,
+    handlers:['arrow','slide'],
+    slideIn:'moveIn',
+    slideOut:'moveOut'
 });
 console.log(ns1);

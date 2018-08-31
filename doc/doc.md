@@ -31,3 +31,68 @@
 37.渐变，渐渐的变化。设置好渐变的属性  时间  速度变化。
 38.到底是操作style呢，还是操作className呢。
 39.node没添加到文档，可以绑定事件和事件处理函数吗  可以
+40.事件(触发元素) 与 对应的切换效果 可配置
+41.切换效果 等于 入场效果 加 出场效果
+入场效果有闪现，移动进去，淡入，但入加移动进入
+42.requsetAnimationFrame和date相互结合。搞一个基本的时间单位。和
+43.上面那个就是setInterval。和transition结合起来试试，动画比较平滑。不会出现那种瞬移
+44.速度快，单位时间确定了，接下来就是距离远就可以了，然后加上缓动
+45.我发现我需要在数写的函数里写上各种实例对象。 把实例放node里面好了
+46.一个抽奖转盘，设计到了 https://blog.csdn.net/baidu_31333625/article/details/78229304
+47.动画用得到  https://developer.mozilla.org/zh-CN/docs/Web/CSS/transition-timing-function
+48.改变逻辑
+初始：舞台状态，台前状态
+入场：台前状态到舞台状态
+离场：舞台状态到台后状态
+离场成功 元素更新 到台前状态
+
+离场之后，将元素设置成台前状态，就是后台状态与台前状态一致。
+在元素离场之后 准备新的页面    而不是要新元素进场之后 才准备新元素
+
+fix:transition需要状态改变，有时需要setTimeout来补救，但是这会引起性能问题。
+
+48.因为是消耗时间的动画，所以需要状态，需要事件，能操作吗？什么时候能继续操作？
+
+49.离场操作，离到哪个位置呢？left?right?
+50.进场操作，从哪里进呢？left?right?
+51.箭头操作的话
+右箭头  正向换页(往后)   从左进场   向右退场
+左箭头  负向换页(往前)  从右进场 向左退场。
+点击箭头的时候，要重置样式，可以之后的transition是无效的  48没有意义了。
+开始就有渐变，点击的时候先 准备状态
+
+两个dom的话，初始state1 --> satete2不渐变
+state2 --> state3  渐变。  但是对于渐变来说，后两个同步设置的状态，是相互覆盖的。
+在箭头点击之前，状态就需要确定了，如果transition的话。
+多个方向的话，可以有多个dom。点击的时候找到对应的dom
+多个dom就是做好渐变初始状态的dom。点击就能动。
+点击(交互)之前 dom要回到初始位置。
+几个操作，几个dom。消失的dom，要去补充位置。
+
+52.transition的话，arrow需要两个准备dom
+53.点击的时候，才是要选中的node 舞台上的，就是舞台node了。
+54.一种切换效果的函数，要提供一个，可以初始化到准备状态的函数。渐变属性设置好了
+
+todolist:
+1.可以检测出未知文本占有几行吗？
+http://chensd.com/2016-06/Pure-js-get-line-count-of-html-element.html
+https://github.com/Clunt/clunt.github.io/blob/master/blog/Skill/Javascript/%E5%A4%9A%E8%A1%8C%E6%96%87%E6%9C%AC%E6%BA%A2%E5%87%BA%E6%98%BE%E7%A4%BA%E7%9C%81%E7%95%A5%E5%8F%B7%E7%9A%84JS%E5%AE%9E%E7%8E%B0.md
+https://teakki.com/p/57dfb084d3a7507f975e60f4
+
+2.分享页按钮向文章分享靠拢
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

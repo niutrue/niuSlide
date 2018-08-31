@@ -50,14 +50,6 @@ function toBack(e){
     node.style.backgroundImage = `url(${arr1[nextIndex]})`;
     node.removeEventListener('transitionend',toBack,false);
 }
-//回到表演状态
-function toPlay(e){
-    var node = e.target;
-    node.style.transition='';//取消渐变属性
-    node.classList.remove('ns_item_next');//不能链式操作
-    node.classList.add('ns_item_cur');
-    node.removeEventListener('transitionend',toPlay,false);
-}
 
 function posUpdateIndex(){//现在我又不想这样写了，想写简单些
     curIndex++;
