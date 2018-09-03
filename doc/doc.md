@@ -73,6 +73,26 @@ state2 --> state3  渐变。  但是对于渐变来说，后两个同步设置�
 53.点击的时候，才是要选中的node 舞台上的，就是舞台node了。
 54.一种切换效果的函数，要提供一个，可以初始化到准备状态的函数。渐变属性设置好了
 
+55.动画，一个元素在合适的时间段里改变自己的可视化属性
+时间太短就是瞬间改变了，时间太长，老死也看不到
+有的动画是关键帧类型的，这种可以设置关键帧的样式，和动画总时间，帧间隔时间。css animation  transition
+有的动画，动画的每一帧都需要设置元素的属性。可以使用计时器，requestAnimationFrame来实现。
+这种需要自己设置每一帧的时间间隔
+transition一般就是元素在两个关键帧之间变化。第一个关键帧初始化的时候通过css和js完成，第二个关键帧触发事件的时候添加。属性改变的时候才会有动画。transition，是在元素属性变化的时候加动态效果。两个是经常的，也不一定是两个状态。只要是属性发生变化就成，异步才可以，同步不算。animation没这个毛病。transition可以和计时器结合，实现多个关键帧的动画。可是计时器不好。requestAnimation和Date属性，或许可以模拟计时器呢。
+跟应用场景有关，不同场景不懂动画模式
+页面处于某种状态  某元素 一直处于一种多帧动画。animation比较好  transition加计时器不是太好
+页面某元素交互是，在这一元素或者其他元素动态属性发生改变。两种异步状态的话，transition当然好了
+
+57.页面切换效果的话，有每次切面切换的时候效果都不同。
+58.页面切换，可以双向循环，可以单向循环，可以步循环。
+
+56.我不但要写轮播图，我还要看主流轮播图插件的源呢
+57.https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions
+58.https://developer.mozilla.org/en-US/docs/Web/CSS/transition-delay
+
+59.效果  从中间从0放大，或者是，从四周开始放大
+60.把与构造函数相关的函数，分模块也要挂在构造函数上
+
 todolist:
 1.可以检测出未知文本占有几行吗？
 http://chensd.com/2016-06/Pure-js-get-line-count-of-html-element.html

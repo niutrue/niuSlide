@@ -12,6 +12,9 @@ var _moveOut = require('../switch/moveOut.js');
 var _findNode = require('../logic/findNode.js');
 
 function arrow(o) {
+    console.log('dasdddsdas');
+
+    return;
     var negBtn = o.negElement;
     var posBtn = o.posElement;
     posBtn.addEventListener('click', function () {

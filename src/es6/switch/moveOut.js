@@ -1,9 +1,20 @@
 import {setStyle} from '../util/util.js';
 import {stageState,backState} from '../logic/baseState.js';
 
-export function moveOut(node){
+export var moveOut = {};
+
+moveOut.run = function(){
     ready(node);
     play(node);
+}
+
+moveOut.attrMap = {
+    readyAttr:{
+
+    },
+    playAttr:{
+        
+    }
 }
 
 //准备状态  这个准备好了

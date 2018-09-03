@@ -3,19 +3,25 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.moveOut = moveOut;
+exports.moveOut = undefined;
 
 var _util = require('../util/util.js');
 
 var _baseState = require('../logic/baseState.js');
 
-function moveOut(node) {
+var moveOut = exports.moveOut = {};
+
+moveOut.run = function () {
     ready(node);
     play(node);
-}
+};
 
-//准备状态  这个准备好了
-function ready(node) {}
+moveOut.attrMap = {
+    readyAttr: {},
+    playAttr: {}
+
+    //准备状态  这个准备好了
+};function ready(node) {}
 //表演状态
 function play(node) {
     //这个延时还可以搞搞

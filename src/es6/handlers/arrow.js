@@ -3,6 +3,9 @@ import {moveOut} from '../switch/moveOut.js';
 import {findNode} from '../logic/findNode.js';
 
 export function arrow (o){
+    console.log('dasdddsdas')
+
+    return
     var negBtn = o.negElement;
     var posBtn = o.posElement;
     posBtn.addEventListener('click',function(){//先退场，然后进场

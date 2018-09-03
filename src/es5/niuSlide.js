@@ -4,58 +4,44 @@ var _loadImage = require('./util/loadImage.js');
 
 var _util = require('./util/util.js');
 
-var _arrow = require('./handlers/arrow.js');
+var _proHandlers = require('./handlers/proHandlers.js');
+
+var _createStageNodes = require('./logic/createStageNodes.js');
+
+var _createItemNodes = require('./logic/createItemNodes.js');
+
+var _updateStage = require('./logic/updateStage.js');
 
 var arr1 = ['http://exploringjs.com/es2018-es2019/img/cover-homepage.jpg', 'http://speakingjs.com/es5/orm_front_cover.jpg', 'http://exploringjs.com/impatient-js/img/cover-homepage.jpg', 'http://exploringjs.com/es6/images/cover.jpg', 'http://exploringjs.com/es2016-es2017/images/cover.jpg'];
 
 class NiuSlide {
-    constructor(container, obj) {
+    constructor(container, opt) {
+        console.log(opt);
+        //初始化属性
+        this.pageArr = opt.pageArr; //装有图片的数组
+        this.pageNum = opt.pageArr.length; //页面的数目
+        this.curIndex = 0; //当前显示的页码
+        this.nextIndex = 1; //接下来要显示的页码
+        this.pageMode = 'pos'; //换页模式，正向，负向
+        this.stageNode = null; //舞台上的node要退场
+        this.nextNode = null; //一个准备node
+        this.prevNode = null; //另一个准备node
+        this.posEffect = opt.posEffect; //正向进场退场效果名称
+        this.negEffect = opt.negEffect; //负向进场退场效果名称
+        this.handlers = opt.handlers; //传进来的事件类型（交互类型）
+        //之后还有可能多种，其实这是入场特效可能性的数量，transition限制的
+        //node操作
         if (typeof container === 'string') {
             this.containerElement = document.querySelector(container);
         } else {
             this.containerElement = container; //挂载元素
         }
-        this.pageArr = obj.pageArr; //拥有图片的数组
-        this.pageNum = obj.pageArr.length; //页面的数目
-        this.curIndex = 0; //当前显示的页码
-        this.nextIndex = 1; //接下来要显示的页码
-        this.pageMode = 'pos'; //换页模式，正向，负向
-        this.stageNode = null; //舞台上的node要退场
-        this.backNode = null; //后台的node要进场
         //创建并且获取轮播图节点
-        this.createNodes();
-        (0, _arrow.arrow)(this); //这里应该是可配置的
+        (0, _createStageNodes.createStageNodes)(this);
+        (0, _createItemNodes.createItemNodes)(this);
+        (0, _proHandlers.proHandlers)(this);
+        (0, _updateStage.updateStage)(this);
     }
-    //创建并且现实dom,完成初始化,初始化，一个台前，一个幕后
-    createNodes() {
-        //这是基本node。舞台上的元素，可以拆开，跟着特效走
-        this.boxElement = (0, _util.div)('ns_box');
-        this.stageElement = (0, _util.div)('ns_stage');
-        this.item1Element = (0, _util.div)('ns_item ns_item_cur', 'item1');
-        (0, _util.setStyle)(this.item1Element, { //一个元素是舞台状态
-            left: '0px',
-            top: '0px',
-            backgroundImage: `url(${this.pageArr[this.curIndex]})`
-        });
-        this.item2Element = (0, _util.div)('ns_item ns_item_next', 'item2');
-        (0, _util.setStyle)(this.item2Element, { //一个元素是台前状态
-            left: '200%',
-            top: '200%',
-            transition: 'left 0 linear',
-            backgroundImage: `url(${this.pageArr[this.nextIndex]})`
-        });
-        this.controlElement = (0, _util.div)('ns_control');
-        this.negElement = (0, _util.btn)('ns_neg');
-        this.posElement = (0, _util.btn)('ns_pos');
-        this.boxElement.append(this.stageElement);
-        this.boxElement.append(this.controlElement);
-        this.stageElement.append(this.item1Element);
-        this.stageElement.append(this.item2Element);
-        this.controlElement.append(this.posElement);
-        this.controlElement.append(this.negElement);
-        //this.containerElement.append(this.boxElement);
-    }
-    //将初始化好的Node结构放页面中
     render() {
         this.containerElement.append(this.boxElement);
     }
@@ -71,8 +57,14 @@ window.addEventListener('lmFirstImageLoad', function () {
 
 var ns1 = new NiuSlide('.niu', {
     pageArr: arr1,
-    handlers: ['arrow', 'slide'],
-    slideIn: 'moveIn',
-    slideOut: 'moveOut'
+    handlers: ['arrow', 'slide'], //字符串对象
+    posEffect: {
+        enter: 'moveH', //字符串，对象
+        leave: 'fade'
+    },
+    negEffect: {
+        enter: 'fade',
+        leave: 'moveH'
+    }
 });
 console.log(ns1);
