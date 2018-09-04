@@ -11,25 +11,35 @@ var _moveOut = require('../switch/moveOut.js');
 
 var _findNode = require('../logic/findNode.js');
 
+//左右箭头点击按钮
+//每个事件要确定 页面切换模式
 function arrow(o) {
-    console.log('dasdddsdas');
-
-    return;
     var negBtn = o.negElement;
     var posBtn = o.posElement;
+    var nodes = o.stageElement.childNodes; //这个会自动更新吗？
+    //这个按钮就是要正向切换
     posBtn.addEventListener('click', function () {
         //先退场，然后进场
-        (0, _findNode.findNode)(o); //确定舞台node和后台node
-        //一个出场
-        var stageNode = o.stageNode;
-        stageNode.targetSlide = o;
-        (0, _moveOut.moveOut)(stageNode);
-        //一个退场
-        var backNode = o.backNode;
-        backNode.targetSlide = o;
-        (0, _moveIn.moveIn)(backNode);
+        o.pageMode = 'pos';
+        var stageNode = (0, _findNode.findNode)(nodes, 'item_cur');
+        stageNode.swDir = 'pos';
+        var nextNode = (0, _findNode.findNode)(nodes, 'item_pr');
+        nextNode.swDir = 'pos';
+        var pl = o.eff.pl;
+        var pe = o.eff.pe;
+        pl.run(stageNode, pl.attr); //离场
+        pe.run(nextNode, pe.attr); //进场
     }, false);
+    //什么元素往什么方向使用什么特效(类型，属性值)
     negBtn.addEventListener('click', function () {
-        console.log('dada');
+        o.pageMode = 'neg';
+        var stageNode = (0, _findNode.findNode)(nodes, 'item_cur');
+        stageNode.swDir = 'neg';
+        var prevNode = (0, _findNode.findNode)(nodes, 'item_nr');
+        prevNode.swDir = 'neg';
+        var nl = o.eff.nl;
+        var ne = o.eff.ne;
+        nl.run(stageNode, nl.attr); //离场
+        ne.run(prevNode, ne.attr); //进场
     }, false);
 }

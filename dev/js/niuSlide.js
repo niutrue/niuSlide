@@ -13,7 +13,7 @@ var _createItemNodes = require('./logic/createItemNodes.js');
 
 var _updateStage = require('./logic/updateStage.js');
 
-var arr1 = ['http://exploringjs.com/es2018-es2019/img/cover-homepage.jpg', 'http://speakingjs.com/es5/orm_front_cover.jpg', 'http://exploringjs.com/impatient-js/img/cover-homepage.jpg', 'http://exploringjs.com/es6/images/cover.jpg', 'http://exploringjs.com/es2016-es2017/images/cover.jpg'];
+var arr1 = ['http://img.xixik.net/custom/section/12shengxiao/xixik-7ac6f5088a2dc1ba.png', 'http://img.xixik.net/custom/section/12shengxiao/xixik-e65e17907ef66f21.png', 'http://img.xixik.net/custom/section/12shengxiao/xixik-32cd22cd24e8e611.png', 'http://img.xixik.net/custom/section/12shengxiao/xixik-e7a4df1e008f407f.png', 'http://img.xixik.net/custom/section/12shengxiao/xixik-adadd997595142e9.png', 'http://img.xixik.net/custom/section/12shengxiao/xixik-ce2ee26653bbab4d.png'];
 
 class NiuSlide {
     constructor(container, opt) {
@@ -22,14 +22,17 @@ class NiuSlide {
         this.pageArr = opt.pageArr; //装有图片的数组
         this.pageNum = opt.pageArr.length; //页面的数目
         this.curIndex = 0; //当前显示的页码
-        this.nextIndex = 1; //接下来要显示的页码
-        this.pageMode = 'pos'; //换页模式，正向，负向
+        this.nextIndex = 0; //正向接下来要显示的页码
+        this.prevIndex = 0; //反向接下来要显示的页码
+        this.pageMode = 'init'; //换页模式，正向，负向   init pos neg
         this.stageNode = null; //舞台上的node要退场
         this.nextNode = null; //一个准备node
         this.prevNode = null; //另一个准备node
         this.posEffect = opt.posEffect; //正向进场退场效果名称
         this.negEffect = opt.negEffect; //负向进场退场效果名称
         this.handlers = opt.handlers; //传进来的事件类型（交互类型）
+        this.enterSign = false; //是否进场成功
+        this.leaveSign = false; //是否退场成功
         //之后还有可能多种，其实这是入场特效可能性的数量，transition限制的
         //node操作
         if (typeof container === 'string') {
@@ -40,8 +43,8 @@ class NiuSlide {
         //创建并且获取轮播图节点
         (0, _createStageNodes.createStageNodes)(this);
         (0, _createItemNodes.createItemNodes)(this);
-        (0, _proHandlers.proHandlers)(this);
         (0, _updateStage.updateStage)(this);
+        (0, _proHandlers.proHandlers)(this);
     }
     render() {
         this.containerElement.append(this.boxElement);
@@ -83,26 +86,36 @@ var _moveOut = require('../switch/moveOut.js');
 
 var _findNode = require('../logic/findNode.js');
 
+//左右箭头点击按钮
+//每个事件要确定 页面切换模式
 function arrow(o) {
-    console.log('dasdddsdas');
-
-    return;
     var negBtn = o.negElement;
     var posBtn = o.posElement;
+    var nodes = o.stageElement.childNodes; //这个会自动更新吗？
+    //这个按钮就是要正向切换
     posBtn.addEventListener('click', function () {
         //先退场，然后进场
-        (0, _findNode.findNode)(o); //确定舞台node和后台node
-        //一个出场
-        var stageNode = o.stageNode;
-        stageNode.targetSlide = o;
-        (0, _moveOut.moveOut)(stageNode);
-        //一个退场
-        var backNode = o.backNode;
-        backNode.targetSlide = o;
-        (0, _moveIn.moveIn)(backNode);
+        o.pageMode = 'pos';
+        var stageNode = (0, _findNode.findNode)(nodes, 'item_cur');
+        stageNode.swDir = 'pos';
+        var nextNode = (0, _findNode.findNode)(nodes, 'item_pr');
+        nextNode.swDir = 'pos';
+        var pl = o.eff.pl;
+        var pe = o.eff.pe;
+        pl.run(stageNode, pl.attr); //离场
+        pe.run(nextNode, pe.attr); //进场
     }, false);
+    //什么元素往什么方向使用什么特效(类型，属性值)
     negBtn.addEventListener('click', function () {
-        console.log('dada');
+        o.pageMode = 'neg';
+        var stageNode = (0, _findNode.findNode)(nodes, 'item_cur');
+        stageNode.swDir = 'neg';
+        var prevNode = (0, _findNode.findNode)(nodes, 'item_nr');
+        prevNode.swDir = 'neg';
+        var nl = o.eff.nl;
+        var ne = o.eff.ne;
+        nl.run(stageNode, nl.attr); //离场
+        ne.run(prevNode, ne.attr); //进场
     }, false);
 }
 },{"../logic/findNode.js":8,"../switch/moveIn.js":12,"../switch/moveOut.js":13}],3:[function(require,module,exports){
@@ -115,11 +128,18 @@ exports.proHandlers = proHandlers;
 
 var _arrow = require('./arrow.js');
 
+var _switch = require('../switch/switch.js');
+
+var _updateStage = require('../logic/updateStage.js');
+
+//绑定参数传过来的事件
 var handlersMap = {
     'arrow': _arrow.arrow
-};
+    //需要把事件跟特效绑定啊  事件和动效的各种状态类型
 
-function proHandlers(o) {
+};function proHandlers(o) {
+    getEff(o);
+    afterSw(o);
     var handlers = [];
     if (o.handlers && o.handlers.length) {
         handlers = o.handlers;
@@ -131,7 +151,50 @@ function proHandlers(o) {
         }
     }
 }
-},{"./arrow.js":2}],4:[function(require,module,exports){
+
+function getEff(o) {
+    var eff = {
+        pe: {},
+        pl: {},
+        ne: {},
+        nl: {}
+    };
+    var pe = o.posEffect;
+    var ne = o.negEffect;
+    var peIn = pe.enter;
+    var peOut = pe.leave;
+    var neIn = ne.enter;
+    var neOut = ne.leave;
+    eff.pe.attr = _switch.swMap[peIn].attrMap.stageAttr;
+    eff.pe.run = _switch.swMap[peIn].run;
+    eff.pl.attr = _switch.swMap[peOut].attrMap.leftAttr;
+    eff.pl.run = _switch.swMap[peOut].run;
+    eff.ne.attr = _switch.swMap[neIn].attrMap.stageAttr;
+    eff.ne.run = _switch.swMap[neIn].run;
+    eff.nl.attr = _switch.swMap[neOut].attrMap.rightAttr;
+    eff.nl.run = _switch.swMap[neOut].run;
+    o.eff = eff; //存在o上
+}
+
+//渐变完成的那个放这好了，使用事件代理
+function afterSw(o) {
+    o.stageElement.addEventListener('transitionend', function (e) {
+        var node = e.target;
+        if (node.classList.contains('item_cur')) {
+            //退场完成
+            //正向的，所以，正向准备node缺失了。退场元素补缺
+            o.tempNode = node;
+            (0, _updateStage.updateReadyNode)(o);
+        } else {
+            //进场完场
+            o.tempNode = node;
+            (0, _updateStage.updatePlayNode)(o);
+        }
+    }, false);
+}
+
+//
+},{"../logic/updateStage.js":9,"../switch/switch.js":14,"./arrow.js":2}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -175,14 +238,16 @@ Object.defineProperty(exports, "__esModule", {
 exports.changePageIndex = changePageIndex;
 exports.calIndex = calIndex;
 //跟页面方向有关 pageDir
-
+var length;
 function changePageIndex(o) {
+    console.log(o.pageMode);
     if (o.pageMode === 'pos') {
         //现在我又不想这样写了，想写简单些
         o.curIndex++;
-    } else if (pageDir === 'neg') {
+    } else if (o.pageMode === 'neg') {
         o.curIndex--;
     }
+    length = o.pageNum;
     calIndex(o);
 }
 //大小无限的数字，向一段固定长度数字序列转化
@@ -191,11 +256,13 @@ function calIndex(o) {
     o.nextIndex = transNum(o.curIndex + 1);
     o.prevIndex = transNum(o.curIndex - 1);
 }
+
 function transNum(num) {
     num = num % length;
     if (num < 0) {
         num = num + length;
     }
+    return num;
 }
 },{}],6:[function(require,module,exports){
 'use strict';
@@ -296,22 +363,23 @@ function createStageNodes(o) {
     //this.containerElement.append(this.boxElement);
 } //创建舞台相关节点
 },{"../util/util.js":16}],8:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.findNode = findNode;
-//找到舞台上的节点和幕后的节点
-function findNode(o) {
-
-    if (o.item1Element.classList.contains('ns_item_cur')) {
-        o.stageNode = o.item1Element;
-        o.backNode = o.item2Element;
-    } else {
-        o.stageNode = o.item2Element;
-        o.backNode = o.item1Element;
+//找到舞台上的节点和各方向的节点
+function findNode(list, cn) {
+    var result = null;
+    if (list.length) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].classList.contains(cn)) {
+                result = list[i];
+            }
+        }
     }
+    return result;
 }
 },{}],9:[function(require,module,exports){
 'use strict';
@@ -320,19 +388,111 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.updateStage = updateStage;
+exports.updateReadyNode = updateReadyNode;
+exports.updatePlayNode = updatePlayNode;
 
 var _switch = require('../switch/switch.js');
 
-console.log(_switch.swMap);
+var _util = require('../util/util.js');
+
+var _changePageIndex = require('../logic/changePageIndex.js');
+
+var _findNode = require('./findNode.js');
 
 //更新舞台表演元素的状态，为下一次专场效果做准备
 function updateStage(o) {
-    //正向入场特效，nextNode的初始状态
+    //正向入场特效类型和正向属性，nextNode的初始状态
     //反向入场特效，prevNode的初始状态
     //双向离场特效，决定stageNode的初始状态
+    //使用 Object.assign的时候，不想改变原始对象，就这样
+    (0, _changePageIndex.changePageIndex)(o);
+    var pe = o.posEffect;
+    var ne = o.negEffect;
+    var nextInitAttr = _switch.swMap[pe.enter].attrMap.rightAttr;
+    nextInitAttr = Object.assign({}, nextInitAttr, { backgroundImage: `url(${o.pageArr[o.nextIndex]})` });
+    var prevInitAttr = _switch.swMap[ne.enter].attrMap.leftAttr;
+    prevInitAttr = Object.assign({}, prevInitAttr, { backgroundImage: `url(${o.pageArr[o.prevIndex]})` });
+    var neOutAttr = _switch.swMap[ne.leave].attrMap.stageAttr;
+    var peOutAttr = _switch.swMap[pe.leave].attrMap.stageAttr;
+    var curInitAttr = Object.assign({}, neOutAttr, peOutAttr, { backgroundImage: `url(${o.pageArr[o.curIndex]})` });
 
+    var stageNodes = o.stageElement.childNodes;
+    stageNodes[0].classList.add('item_nr');
+    (0, _util.setStyle)(stageNodes[0], prevInitAttr);
+    stageNodes[1].classList.add('item_cur');
+    (0, _util.setStyle)(stageNodes[1], curInitAttr);
+    stageNodes[2].classList.add('item_pr');
+    (0, _util.setStyle)(stageNodes[2], nextInitAttr);
 }
-},{"../switch/switch.js":14}],10:[function(require,module,exports){
+//离场成功之后，重新初始化准备元素
+//入场成功之后，重新初始化舞台元素
+//看来我需要知道入场node和出场node
+function updateReadyNode(o) {
+    o.leaveSign = true;
+    updatePageIndex(o);
+    var node = o.tempNode;
+    var pe = o.posEffect;
+    var ne = o.negEffect;
+    if (node.swDir === 'pos') {
+        var nextInitAttr = _switch.swMap[pe.enter].attrMap.rightAttr;
+        var initAttr = _switch.swMap[pe.leave].attrMap.readyAttr; //同一种要被next覆盖
+        //Object是不是 相同属性的话 后面的覆盖前面的
+        nextInitAttr = Object.assign({}, initAttr, nextInitAttr, {
+            backgroundImage: `url(${o.pageArr[o.nextIndex]})`,
+            transition: ''
+        });
+        (0, _util.setStyle)(node, nextInitAttr);
+        node.classList.remove('item_cur');
+        node.classList.add('item_pr');
+        //另一个准备dom
+        var otherNode = (0, _findNode.findNode)(o.stageElement.childNodes, 'item_nr');
+        otherNode.style.backgroundImage = `url(${o.pageArr[o.prevIndex]})`;
+    } else if (node.swDir === 'neg') {
+        var prevInitAttr = _switch.swMap[ne.enter].attrMap.leftAttr;
+        var initAttr = _switch.swMap[ne.leave].attrMap.readyAttr;
+        prevInitAttr = Object.assign({}, initAttr, prevInitAttr, {
+            backgroundImage: `url(${o.pageArr[o.prevIndex]})`,
+            transition: ''
+        });
+        (0, _util.setStyle)(node, prevInitAttr);
+        node.classList.remove('item_cur');
+        node.classList.add('item_nr');
+        //另一个准备dom
+        var otherNode = (0, _findNode.findNode)(o.stageElement.childNodes, 'item_pr');
+        otherNode.style.backgroundImage = `url(${o.pageArr[o.nextIndex]})`;
+    }
+}
+
+function updatePlayNode(o) {
+    o.enterSign = true;
+    updatePageIndex(o);
+    var node = o.tempNode;
+    var pe = o.posEffect;
+    var ne = o.negEffect;
+    var neOutAttr = _switch.swMap[ne.leave].attrMap.stageAttr;
+    var peOutAttr = _switch.swMap[pe.leave].attrMap.stageAttr;
+    var curInitAttr = Object.assign({}, neOutAttr, peOutAttr, {
+        transition: ''
+    });
+    (0, _util.setStyle)(node, curInitAttr);
+    node.classList.remove('item_pr');
+    node.classList.remove('item_nr');
+    node.classList.add('item_cur');
+}
+
+function updatePageIndex(o) {
+    if (o.enterSign && o.leaveSign) {
+        o.enterSign = false;
+        o.leaveSign = false;
+    } else {
+        (0, _changePageIndex.changePageIndex)(o);
+    }
+}
+//入场和离场都需要更新视图，但是呢，改变当前图片的索引，只能一个去执行
+//入场先完成，离场后完成
+//离场先完成，入场后完成
+//更新索引当然是先完成了
+},{"../logic/changePageIndex.js":5,"../switch/switch.js":14,"../util/util.js":16,"./findNode.js":8}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -354,13 +514,19 @@ fade.attrMap = {
         opacity: 1
     },
     leftAttr: {
-        left: 0
+        opacity: 0
+    },
+    readyAttr: {
+        opacity: 1
     }
 
     //渐变的初始状态，测试用的
-};fade.ready = function () {};
+};fade.ready = function (node, attr) {};
 
-fade.run = function (node) {};
+fade.run = function (node, attr) {
+    var style = Object.assign({}, attr, { transition: 'opacity 0.5s linear' });
+    (0, _util.setStyle)(node, style);
+};
 },{"../logic/baseState.js":4,"../util/util.js":16}],11:[function(require,module,exports){
 'use strict';
 
@@ -384,12 +550,20 @@ moveH.attrMap = {
     },
     leftAttr: {
         left: '-100%'
+    },
+    readyAttr: {
+        left: '0px'
     }
 
     //渐变的初始状态，测试用的
-};moveH.ready = function () {};
+};moveH.ready = function (node, attr) {};
 
-moveH.run = function (node) {};
+moveH.run = function (node, attr) {
+    var style = Object.assign({}, attr, { transition: 'left 0.5s linear' });
+    (0, _util.setStyle)(node, style);
+};
+
+//
 },{"../logic/baseState.js":4,"../util/util.js":16}],12:[function(require,module,exports){
 'use strict';
 

@@ -11,15 +11,19 @@ fade.attrMap = {
         opacity:1
     },
     leftAttr:{
-        left:0
+        opacity:0
+    },
+    readyAttr:{
+        opacity:1
     }
 }
 
 //渐变的初始状态，测试用的
-fade.ready = function(){
+fade.ready = function(node,attr){
 
 }
 
-fade.run = function(node){
-
+fade.run = function(node,attr){
+    var style = Object.assign({},attr,{transition:'opacity 0.5s linear'})
+    setStyle(node,style);
 }

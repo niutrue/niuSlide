@@ -6,13 +6,13 @@ import {createItemNodes} from './logic/createItemNodes.js';
 import {updateStage} from './logic/updateStage.js';
 
 var arr1 = [
-    'http://exploringjs.com/es2018-es2019/img/cover-homepage.jpg',
-    'http://speakingjs.com/es5/orm_front_cover.jpg',
-    'http://exploringjs.com/impatient-js/img/cover-homepage.jpg',
-    'http://exploringjs.com/es6/images/cover.jpg',
-    'http://exploringjs.com/es2016-es2017/images/cover.jpg',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-7ac6f5088a2dc1ba.png',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-e65e17907ef66f21.png',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-32cd22cd24e8e611.png',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-e7a4df1e008f407f.png',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-adadd997595142e9.png',
+    'http://img.xixik.net/custom/section/12shengxiao/xixik-ce2ee26653bbab4d.png'
 ]
-
 
 class NiuSlide{
     constructor(container,opt){
@@ -21,14 +21,17 @@ class NiuSlide{
         this.pageArr = opt.pageArr;//装有图片的数组
         this.pageNum = opt.pageArr.length;//页面的数目
         this.curIndex = 0;//当前显示的页码
-        this.nextIndex = 1;//接下来要显示的页码
-        this.pageMode = 'pos';//换页模式，正向，负向
+        this.nextIndex = 0;//正向接下来要显示的页码
+        this.prevIndex = 0;//反向接下来要显示的页码
+        this.pageMode = 'init';//换页模式，正向，负向   init pos neg
         this.stageNode = null;//舞台上的node要退场
         this.nextNode = null;//一个准备node
         this.prevNode = null;//另一个准备node
         this.posEffect = opt.posEffect;//正向进场退场效果名称
         this.negEffect = opt.negEffect;//负向进场退场效果名称
         this.handlers = opt.handlers;//传进来的事件类型（交互类型）
+        this.enterSign = false;//是否进场成功
+        this.leaveSign = false;//是否退场成功
         //之后还有可能多种，其实这是入场特效可能性的数量，transition限制的
         //node操作
         if(typeof container === 'string'){
@@ -39,8 +42,8 @@ class NiuSlide{
         //创建并且获取轮播图节点
         createStageNodes(this);
         createItemNodes(this);
-        proHandlers(this);
         updateStage(this);
+        proHandlers(this);
     }
     render(){
         this.containerElement.append(this.boxElement);
