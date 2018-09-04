@@ -70,4 +70,3 @@ var ns1 = new NiuSlide('.niu', {
         leave: 'moveH'
     }
 });
-console.log(ns1);

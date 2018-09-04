@@ -8,7 +8,6 @@ exports.calIndex = calIndex;
 //跟页面方向有关 pageDir
 var length;
 function changePageIndex(o) {
-    console.log(o.pageMode);
     if (o.pageMode === 'pos') {
         //现在我又不想这样写了，想写简单些
         o.curIndex++;
