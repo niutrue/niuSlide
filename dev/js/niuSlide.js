@@ -71,7 +71,6 @@ var ns1 = new NiuSlide('.niu', {
         leave: 'moveH'
     }
 });
-console.log(ns1);
 },{"./handlers/proHandlers.js":3,"./logic/createItemNodes.js":6,"./logic/createStageNodes.js":7,"./logic/updateStage.js":9,"./util/loadImage.js":15,"./util/util.js":16}],2:[function(require,module,exports){
 'use strict';
 
@@ -240,7 +239,6 @@ exports.calIndex = calIndex;
 //跟页面方向有关 pageDir
 var length;
 function changePageIndex(o) {
-    console.log(o.pageMode);
     if (o.pageMode === 'pos') {
         //现在我又不想这样写了，想写简单些
         o.curIndex++;
@@ -381,6 +379,40 @@ function findNode(list, cn) {
     }
     return result;
 }
+
+//开始直接卡住!
+function pauseSomeMinutes(min) {
+    window.requestAnimationFrame(goEnd);
+    var reStartTime = +new Date() + 1000 * 60 * min;
+    for (var i = +new Date(); i < reStartTime; i++) {
+        window.requestAnimationFrame(goEnd);
+        i = +new Date();
+    }
+}
+
+//pauseSomeMinutes(1);
+var num = 0;
+var s = window.requestAnimationFrame;
+s(goEnd);
+//不堵塞。两个进程啊
+function goEnd() {
+    //这个是封装啊
+    num++;
+    console.log(num); //可以访问外界变量
+    console.log(new Date().getSeconds());
+    if (num == 20) {
+        s = undefined;
+    }
+    if (s) {
+        s(goEnd);
+    }
+}
+//可以写多个，可以吗?
+// window.requestAnimationFrame(goEnd);
+//for和animation照样会卡
+//callback里写条件呢？
+//也可以赋值给变量
+//https://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
 },{}],9:[function(require,module,exports){
 'use strict';
 
