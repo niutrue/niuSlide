@@ -8,3 +8,33 @@
     margin-top:200px;
     margin-left:200px;
 }
+
+.p_box{
+    float:left;
+    height:30px;
+    line-height:30px;
+    padding-right:2px;
+    background-color:pink;
+    color:#000;
+    font-size:20px;
+}
+.p_box + .p_box{
+    margin-top:2px;
+}
+.p_box.p_fire{
+    text-indent:24px;
+    background-image:url('http://static.iyingdi.cn/yingdiWeb/images/shop/shop_fire.png');
+    background-repeat:no-repeat;
+    background-size:auto 20px;
+    background-position:3px 5px;
+}
+.p_box.p_cancel::after{
+    content:' ';
+    display:block;
+    position:relative;
+    left:0px;
+    top:-50%;
+    width:100%;
+    height:1px;
+    background-color:#9B9B9B;
+}

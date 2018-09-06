@@ -54,21 +54,21 @@ class NiuSlide{
     }
 }
 
-var lm = new LoadImage('lm');
-lm.loadImages(arr1);
-window.addEventListener('lmFirstImageLoad',function(){
-    ns1.render();//这样经常可以访问到。变量提升加异步访问可以
-},false);
-
-var ns1 = new NiuSlide('.niu',{
-    pageArr:arr1,
-    handlers:['arrow','slide'],//字符串对象
-    posEffect:{
-        enter:'moveH',//字符串，对象
-        leave:'fade'
-    },
-    negEffect:{
-        enter:'fade',
-        leave:'moveH'
-    }
-});
+// var lm = new LoadImage('lm');
+// lm.loadImages(arr1);
+// window.addEventListener('lmFirstImageLoad',function(){
+//     ns1.render();//这样经常可以访问到。变量提升加异步访问可以
+// },false);
+//
+// var ns1 = new NiuSlide('.niu',{
+//     pageArr:arr1,
+//     handlers:['arrow','slide'],//字符串对象
+//     posEffect:{
+//         enter:'moveH',//字符串，对象
+//         leave:'fade'
+//     },
+//     negEffect:{
+//         enter:'fade',
+//         leave:'moveH'
+//     }
+// });

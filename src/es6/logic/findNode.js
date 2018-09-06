@@ -24,7 +24,7 @@ function pauseSomeMinutes(min){
 //pauseSomeMinutes(1);
 var num = 0;
 var s = window.requestAnimationFrame;
-s(goEnd);
+//s(goEnd);
 //不堵塞。两个进程啊
 function goEnd(){//这个是封装啊
     num ++ ;

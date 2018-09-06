@@ -53,24 +53,24 @@ class NiuSlide {
     static foamatArr() {}
 }
 
-var lm = new _loadImage.LoadImage('lm');
-lm.loadImages(arr1);
-window.addEventListener('lmFirstImageLoad', function () {
-    ns1.render(); //这样经常可以访问到。变量提升加异步访问可以
-}, false);
-
-var ns1 = new NiuSlide('.niu', {
-    pageArr: arr1,
-    handlers: ['arrow', 'slide'], //字符串对象
-    posEffect: {
-        enter: 'moveH', //字符串，对象
-        leave: 'fade'
-    },
-    negEffect: {
-        enter: 'fade',
-        leave: 'moveH'
-    }
-});
+// var lm = new LoadImage('lm');
+// lm.loadImages(arr1);
+// window.addEventListener('lmFirstImageLoad',function(){
+//     ns1.render();//这样经常可以访问到。变量提升加异步访问可以
+// },false);
+//
+// var ns1 = new NiuSlide('.niu',{
+//     pageArr:arr1,
+//     handlers:['arrow','slide'],//字符串对象
+//     posEffect:{
+//         enter:'moveH',//字符串，对象
+//         leave:'fade'
+//     },
+//     negEffect:{
+//         enter:'fade',
+//         leave:'moveH'
+//     }
+// });
 },{"./handlers/proHandlers.js":3,"./logic/createItemNodes.js":6,"./logic/createStageNodes.js":7,"./logic/updateStage.js":9,"./util/loadImage.js":15,"./util/util.js":16}],2:[function(require,module,exports){
 'use strict';
 
@@ -393,7 +393,7 @@ function pauseSomeMinutes(min) {
 //pauseSomeMinutes(1);
 var num = 0;
 var s = window.requestAnimationFrame;
-s(goEnd);
+//s(goEnd);
 //不堵塞。两个进程啊
 function goEnd() {
     //这个是封装啊
